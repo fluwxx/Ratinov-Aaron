@@ -23,12 +23,53 @@ gmialBtn.addEventListener('click', () => {
 const parent = document.querySelector('#parent_block')
 const child = document.querySelector('#child_block')
 
-function moveRight(position){
-    if (position < parent.clientWidth - child.clientWidth){
-        position += 1
-
-        child.style.right = `${position} px`
-
-        setTimeout(() => moveRight(position), 10)
+const moveRightAndDown = (left, top) => {
+    if (left < parent.clientWidth - child.clientWidth){
+        left += 1
+        child.style.left = `${left} px`
+        setTimeout(()=> moveRightAndDown(left, top), 100)
+    }else if (top< parent.clientHeight - child.clientHeight){
+        top += 1
+        child.style.top `${top} px`
+        setTimeout(() => moveRightAndDown(left, top), 100)
     }
 }
+
+moveRightAndDown(0, 0)
+
+
+let count = 0
+let isCounting = false
+let intervalId
+
+const time = document.querySelector('#time_buttons')
+const start = document.getElementById('start')
+const stop = document.getElementById('stop')
+const reset = document.getElementById('reset')
+
+const starCounting = () => {
+    if (!isCounting) {
+        isCounting = true
+        intervalId = setInterval(() => {
+            count++
+            time.textContent = count
+        }, 1000)
+    }
+}
+
+const stopCounting = () =>{
+    if (isCounting){
+        isCounting = false
+        clearInterval(intervalId)
+    }
+}
+
+const resetCounting = () => {
+    stopCounting()
+    count
+    time.textContent = count
+}
+
+start.addEventListener('click', starCounting)
+stop.addEventListener('click', stopCounting)
+reset.addEventListener('click', resetCounting)

@@ -8,7 +8,7 @@ const regExp = /^\+996 [25793]\d{2} \d{2}-\d{2}$/
 
 phoneBtn.onclick = ()=> {
     if (regExp.test(phoneInput.value)){
-        phoneResult.innerHTML = ' ok'
+        phoneResult.innerHTML = ' сперма ok'
         phoneResult.style.color = 'green'
     }else {
         phoneResult.innerHTML = 'not ok'
