@@ -63,7 +63,7 @@ tabsParent.onclick = (event) => {
     }
 }
 
-let modalShown = false; // Флаг для отслеживания вызова модального окна
+let modalShown = false;
 
 const showModalOnScrollEnd = () => {
     const scrollPosition = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
@@ -71,13 +71,7 @@ const showModalOnScrollEnd = () => {
     const bodyHeight = document.body.offsetHeight;
 
     if (scrollPosition + windowHeight >= bodyHeight && !modalShown) {
-        // Если пользователь достиг конца страницы и модальное окно еще не показано
-        // Ваш код для вызова модального окна здесь
-
-        // После вызова модального окна устанавливаем флаг, указывающий, что оно было показано
         modalShown = true;
-
-        // Удаляем обработчик события scroll после показа модального окна
         window.removeEventListener('scroll', showModalOnScrollEnd);
     }
 };
@@ -106,3 +100,73 @@ document.querySelector('.modal_close').addEventListener('click', () => {
     modal.style.display = 'none';
 });
 
+
+// CONVEVRTeR
+// const  som = document.querySelector('#som')
+// const  usd = document.querySelector('#usd')
+//
+// usd.addEventListener('input', (event) =>{
+//     const xhr = new XMLHttpRequest()
+//     xhr.open('GET', '../data/converter.json')
+//     xhr.setRequestHeader('Content-type', 'application/json')
+//     xhr.send()
+//
+//     xhr.addEventListener('load', () =>{
+//         const data = JSON.parse(xhr.response)
+//         som.value = (usd.value * data.usd).toFixed(2)
+//
+//     })
+// })
+// som.addEventListener('input', (event) =>{
+//     const xhr = new XMLHttpRequest()
+//     xhr.open('GET', '../data/converter.json')
+//     xhr.setRequestHeader('Content-type', 'application/json')
+//     xhr.send()
+//
+//     xhr.addEventListener('load', () =>{
+//         const data = JSON.parse(xhr.response)
+//         usd.value = (som.value / data.usd).toFixed(2)
+//
+//     })
+// })
+
+const  som = document.querySelector('#som')
+const  usd = document.querySelector('#usd')
+const  eur = document.querySelector('#eur')
+
+const converter = (element, targetElement, current) => {
+    element.addEventListener('input', () => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', '../data/converter.json');
+        xhr.setRequestHeader('Content-type', 'application/json');
+        xhr.send();
+
+        xhr.onload = () => {
+            const data = JSON.parse(xhr.responseText);
+
+            switch (current) {
+                case 'som':
+                    targetElement.value = (element.value / data.usd).toFixed(2);
+                    break;
+                case 'usd':
+                    targetElement.value = (element.value * data.usd).toFixed(2);
+                    break;
+                case 'eur':
+                    if (targetElement === som) {
+                        targetElement.value = (element.value * data.eur / data.usd).toFixed(2);
+                    } else if (targetElement === usd) {
+                        targetElement.value = (element.value * data.eur).toFixed(2);
+                    }
+                    break;
+                default:
+                    break;
+            }
+            element.value === '' && (targetElement = '')
+        };
+    });
+};
+
+converter(som, usd, 'som');
+converter(usd, som, 'usd');
+converter(eur, som, 'eur');
+converter(eur, usd, 'eur');
