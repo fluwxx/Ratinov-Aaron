@@ -188,6 +188,7 @@ const fetchCardData = (cardNumber) => {
             card.innerHTML = `
                 <p>${data.title}</p>
                 <p style="color: ${data.completed ? 'green' : 'red'}">${data.completed}</p>
+                <span>${data.id}</span>
             `;
             console.log(data);
         });
