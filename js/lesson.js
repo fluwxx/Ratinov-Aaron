@@ -175,49 +175,67 @@ converter(eur, usd, 'eur');
 // card switcher
 
 
-const card = document.querySelector('.card');
-const btnNext = document.querySelector('#btn-next');
-const btnPrev = document.querySelector('#btn-prev');
+const som = document.querySelector('#som');
+const usd = document.querySelector('#usd');
+const eur = document.querySelector('#eur');
 
-let countCard = 1;
+const converter = (element, targetElement, current) => {
+    element.addEventListener('input', async () => {
+        try {
+            const response = await fetch('../data/converter.json');
+            if (!response.ok) {
+                throw new Error('Ошибка получения данных');
+            }
+            const data = await response.json();
 
-const fetchCardData = (cardNumber) => {
-    fetch(`https://jsonplaceholder.typicode.com/todos/${cardNumber}`)
-        .then(response => response.json())
-        .then((data)=>{
-            card.innerHTML = `
-                <p>${data.title}</p>
-                <p style="color: ${data.completed ? 'green' : 'red'}">${data.completed}</p>
-                <span>${data.id}</span>
-            `;
-            console.log(data);
-        });
+            switch (current) {
+                case 'som':
+                    targetElement.value = (element.value / data.usd).toFixed(2);
+                    break;
+                case 'usd':
+                    targetElement.value = (element.value * data.usd).toFixed(2);
+                    break;
+                case 'eur':
+                    if (targetElement === som) {
+                        targetElement.value = (element.value * data.eur / data.usd).toFixed(2);
+                    } else if (targetElement === usd) {
+                        targetElement.value = (element.value * data.eur).toFixed(2);
+                    }
+                    break;
+                default:
+                    break;
+            }
+            element.value === '' && (targetElement = '');
+        } catch (error) {
+            console.error('Ошибка при конвертации:', error);
+        }
+    });
 };
 
-const handleNextClick = () => {
-    countCard = (countCard % 200) + 1;
-    fetchCardData(countCard);
-};
-
-const handlePrevClick = () => {
-    countCard = (countCard === 1) ? 200 : countCard - 1;
-    fetchCardData(countCard);
-};
-
-fetchCardData(countCard);
-
-btnNext.addEventListener('click', handleNextClick);
-btnPrev.addEventListener('click', handlePrevClick);
+converter(som, usd, 'som');
+converter(usd, som, 'usd');
+converter(eur, som, 'eur');
+converter(eur, usd, 'eur');
 
 
-const fetchAndDisplayPosts = () => {
-    fetch('https://jsonplaceholder.typicode.com/posts')
-        .then(response => response.json())
-        .then((data) => {
-            console.log(data);
-        });
-};
+const cityNameInput = document.querySelector('.cityName')
+const btnSearch = document.querySelector('#btn-search')
+const city = document.querySelector('.city')
+const temp = document.querySelector('.temp')
 
-fetchAndDisplayPosts();
+const BASE_URL = "http://api.openweathermap.org"
+
+const citySearch = ()=>{
+    btnSearch.addEventListener('click', () =>{
+        fetch(`${BASE_URL}http://api.openweathermap.org/data/2.5/weather?q=Bishkek$appid`)
+            .then(response => response.json())
+            .then(data => {
+                city.innerHTML = data.name
+                temp.innerHTML = Math.round(data.main.temp - 273)
+
+            })
+    })
+}
+citySearch()
 
 
